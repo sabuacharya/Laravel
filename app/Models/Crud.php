@@ -11,6 +11,7 @@ class Crud extends Model
 
     protected $fillable = [
         'company',
-        'model'
+        'model',
+        'image'
     ];
 }

@@ -11,8 +11,7 @@ class CrudRequest extends FormRequest
      */
     public function authorize()
     {
-        // dd($this->crud);
-        return $this->crud;
+        return true;
     }
 
     /**
@@ -31,6 +30,7 @@ class CrudRequest extends FormRequest
             
             'company'   =>  'required | string | min:3',
             'model'   =>  $rule . ' | string | min:3',
+            'image' => $rule . '|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\CrudRequest;
 use App\Models\Crud;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class CRUDController extends Controller
 {
@@ -29,7 +31,12 @@ class CRUDController extends Controller
      */
     public function store(CrudRequest $request)
     {
-        Crud::create($request->validated());
+        $validatedData = $request->validated();
+        $image = $request->file('image');
+        $imageName = Str::uuid()->toString() . '-' . time() . '.' . $image->getClientOriginalExtension();
+        $image->move('site/Upload', $imageName);
+        $validatedData['image'] = $imageName;
+        Crud::create($validatedData);
         return redirect()->route('crud.create');
     }
 
@@ -55,7 +62,15 @@ class CRUDController extends Controller
      */
     public function update(CrudRequest $request, Crud $crud)
     {
-        $crud->update($request->validated());
+        $validatedData = $request->validated();
+        $image = $request->file('image');
+        if ($image) {
+            File::delete('site/Upload/'. $crud->image);
+            $imageName = Str::uuid()->toString() . '-' . time() . '.' . $image->getClientOriginalExtension();
+            $image->move('site/Upload', $imageName);
+            $validatedData['image'] = $imageName;
+        }
+        $crud->update($validatedData);
         return redirect()->route('crud.edit', $crud);
     }
 
